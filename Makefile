@@ -7,3 +7,9 @@ libSDL.swc: libSDL.a
 
 libSDL.a:
 	cd sdl; make -f Makefile.flashvm clean all; cd ..
+
+clean:
+	cd sdl; make -f Makefile.flashvm clean; cd ..
+	rm FlashDisplay.swf
+	rm libSDL.swc
+	rm sdl/SDL.l.bc

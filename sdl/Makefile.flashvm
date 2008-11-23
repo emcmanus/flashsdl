@@ -1,6 +1,7 @@
 # Makefile to build the SDL library
 
-DEFS += -DFLASHVM=1
+DEFS += -DFLASHVM 
+DEFS += -DDEBUG_BUILD
 
 CC = gcc
 INCLUDE = -I./include

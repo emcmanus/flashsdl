@@ -30,6 +30,7 @@
 #endif
 
 #include <stdio.h>
+#include "AS3.h"
 
 #if SDL_THREAD_PTH
 #include <pth.h>
@@ -152,7 +153,7 @@ int SDL_InitSubSystem(Uint32 flags)
 
 int SDL_Init(Uint32 flags)
 {
-	printf("inside of SDL_Init()\n");
+	sztrace("inside of SDL_Init()\n");
 #if !SDL_THREADS_DISABLED && SDL_THREAD_PTH
 	if (!pth_init()) {
 		return -1;
