@@ -120,11 +120,11 @@ static VideoBootStrap *bootstrap[] = {
 #if SDL_VIDEO_DRIVER_AALIB
 	&AALIB_bootstrap,
 #endif
+#if SDL_VIDEO_DRIVER_FLASH
+	&FLASH_bootstrap,
+#endif
 #if SDL_VIDEO_DRIVER_DUMMY
 	&DUMMY_bootstrap,
-#endif
-#if SDL_VIDEO_DRIVER_FLASHVM
-	&FLASH_bootstrap,
 #endif
 	NULL
 };
@@ -152,6 +152,9 @@ int SDL_VideoInit (const char *driver_name, Uint32 flags)
 	int i;
 	SDL_PixelFormat vformat;
 	Uint32 video_flags;
+
+	sztrace("SDL_VideoInit (const char *driver_name, Uint32 flags)");
+	sztrace(driver_name);
 
 	/* Toggle the event thread flags, based on OS requirements */
 #if defined(MUST_THREAD_EVENTS)
@@ -196,6 +199,7 @@ int SDL_VideoInit (const char *driver_name, Uint32 flags)
 		}
 	}
 	if ( video == NULL ) {
+		sztrace("No available video device");
 		SDL_SetError("No available video device");
 		return(-1);
 	}

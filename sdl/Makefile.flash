@@ -1,6 +1,6 @@
 # Makefile to build the SDL library
 
-DEFS += -DFLASHVM 
+DEFS += -DFLASH
 DEFS += -DDEBUG_BUILD
 
 CC = gcc
@@ -22,10 +22,9 @@ SOURCES = \
 	src/stdlib/*.c \
 	src/thread/*.c \
 	src/timer/*.c \
+	src/video/flash/*.c \
 	src/video/*.c \
 	src/audio/dummy/*.c \
-	src/video/dummy/*.c \
-	src/video/flashvm/*.c \
 	src/joystick/dummy/*.c \
 	src/cdrom/dummy/*.c \
 	src/thread/generic/*.c \

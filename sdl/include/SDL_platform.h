@@ -96,9 +96,9 @@
 #undef __WIN32__
 #define __WIN32__	1
 #endif
-#if defined(FLASHVM)
-#undef __FLASHVM__
-#define __FLASHVM__	1
+#if defined(FLASH)
+#undef __FLASH__
+#define __FLASH__	1
 #endif
 
 #endif /* _SDL_platform_h */

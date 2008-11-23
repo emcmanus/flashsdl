@@ -27,17 +27,6 @@
 
 #include <stdarg.h>
 
-/*
-typedef signed char int8_t;
-typedef unsigned char uint8_t;
-typedef signed short int16_t;
-typedef unsigned short uint16_t;
-typedef signed int int32_t;
-typedef unsigned int uint32_t;
-typedef unsigned int size_t;
-typedef unsigned long uintptr_t;
-*/
-
 /* Useful headers */
 #define HAVE_ALLOCA_H 1
 #define HAVE_SYS_TYPES_H 1
@@ -51,8 +40,8 @@ typedef unsigned long uintptr_t;
 #define HAVE_STDINT_H 1
 #define HAVE_CTYPE_H 1
 #define HAVE_MATH_H 1
-//#define HAVE_ICONV_H 1
 #define HAVE_SIGNAL_H 1
+//#define HAVE_ICONV_H 1 
 
 /* C library functions */
 #define HAVE_MALLOC 1
@@ -110,6 +99,6 @@ typedef unsigned long uintptr_t;
 #define SDL_TIMERS_DISABLED	1
 
 //#define SDL_VIDEO_DRIVER_DUMMY	1
-#define SDL_VIDEO_DRIVER_FLASH	1
+//#define SDL_VIDEO_DRIVER_FLASH	1
 
 #endif /* _SDL_config_minimal_h */

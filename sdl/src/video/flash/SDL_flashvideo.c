@@ -33,7 +33,6 @@
 
 #define FLASHVID_DRIVER_NAME "flash"
 
-#include <stdio.h>
 #include "AS3.h"
 
 /* Initialization/Query functions */
@@ -58,8 +57,6 @@ static int FLASH_Available(void)
 {
 	const char *envr = SDL_getenv("SDL_VIDEODRIVER");
 	
-	sztrace("FLASH_Available(void)\n");
-
 	if ((envr) && (SDL_strcmp(envr, FLASHVID_DRIVER_NAME) == 0)) {
 		return(1);
 	}
@@ -128,7 +125,7 @@ static SDL_VideoDevice *FLASH_CreateDevice(int devindex)
 }
 
 VideoBootStrap FLASH_bootstrap = {
-	FLASHVID_DRIVER_NAME, "SDL flash video driver",
+	FLASHVID_DRIVER_NAME, "SDL Flash video driver",
 	FLASH_Available, FLASH_CreateDevice
 };
 

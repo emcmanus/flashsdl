@@ -55,7 +55,8 @@ AS3_Val run(void *data, AS3_Val args)
 
 	bitmapData = initDisplay(parent, 320, 240);
 
-	SDL_Init(SDL_INIT_VIDEO);
+	if(SDL_Init(SDL_INIT_VIDEO) > 0) sztrace("sdl init successful");
+	else sztrace("sdl init unsuccessful");
 
 	_fillRect(bitmapData, 50, 50, 50, 50, 0xFF00FF);
 

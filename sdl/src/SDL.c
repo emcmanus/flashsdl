@@ -67,7 +67,7 @@ int surfaces_allocated = 0;
 
 int SDL_InitSubSystem(Uint32 flags)
 {
-	printf("in SDL_InitSubSystem()\n");
+	sztrace("SDL_InitSubSystem()");
 #if !SDL_VIDEO_DISABLED
 	/* Initialize the video/event subsystem */
 	if ( (flags & SDL_INIT_VIDEO) && !(SDL_initialized & SDL_INIT_VIDEO) ) {
@@ -76,6 +76,7 @@ int SDL_InitSubSystem(Uint32 flags)
 			return(-1);
 		}
 		SDL_initialized |= SDL_INIT_VIDEO;
+		sztrace("video init!!");
 	}
 #else
 	if ( flags & SDL_INIT_VIDEO ) {
