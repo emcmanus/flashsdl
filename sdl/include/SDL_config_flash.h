@@ -27,6 +27,10 @@
 
 #include <stdarg.h>
 
+#define SDL_ASSEMBLY_ROUTINES 0
+#define SDL_HERMES_BLITTERS 0
+#define SDL_ALTIVEC_BLITTERS 0
+
 /* Useful headers */
 #define HAVE_ALLOCA_H 1
 #define HAVE_SYS_TYPES_H 1
@@ -98,7 +102,7 @@
 /* Enable the stub timer support (src/timer/dummy/\*.c) */
 #define SDL_TIMERS_DISABLED	1
 
-//#define SDL_VIDEO_DRIVER_DUMMY	1
-//#define SDL_VIDEO_DRIVER_FLASH	1
+#define SDL_VIDEO_DRIVER_DUMMY	0
+#define SDL_VIDEO_DRIVER_FLASH	1
 
 #endif /* _SDL_config_minimal_h */

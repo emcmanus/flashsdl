@@ -181,6 +181,7 @@ int SDL_VideoInit (const char *driver_name, Uint32 flags)
 		}
 #endif
 		for ( i=0; bootstrap[i]; ++i ) {
+			sztrace(bootstrap[i]->name);
 			if ( SDL_strcasecmp(bootstrap[i]->name, driver_name) == 0) {
 				if ( bootstrap[i]->available() ) {
 					video = bootstrap[i]->create(index);
@@ -190,6 +191,7 @@ int SDL_VideoInit (const char *driver_name, Uint32 flags)
 		}
 	} else {
 		for ( i=0; bootstrap[i]; ++i ) {
+			sztrace(bootstrap[i]->name);
 			if ( bootstrap[i]->available() ) {
 				video = bootstrap[i]->create(index);
 				if ( video != NULL ) {
