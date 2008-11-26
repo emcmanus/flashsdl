@@ -35,6 +35,32 @@
 
 #include "AS3.h"
 
+
+static AS3_Val _fillRect(AS3_Val bitmapData, int x, int y, int w, int h, int c)
+{
+	AS3_Val Rectangle_class;
+	AS3_Val rectangle;
+	AS3_Val xloc = AS3_Int(x);
+	AS3_Val yloc = AS3_Int(y);
+	AS3_Val width = AS3_Int(w);
+	AS3_Val height = AS3_Int(h);
+	AS3_Val color = AS3_Int(c);
+	AS3_Val rectangle_params = AS3_Array("AS3ValType, AS3ValType, AS3ValType, AS3ValType", xloc, yloc, width, height);
+	AS3_Val fillRect_params;
+
+	Rectangle_class = AS3_NSGetS(AS3_String("flash.geom"), "Rectangle");
+
+	rectangle = AS3_New(Rectangle_class, rectangle_params);
+
+	fillRect_params = AS3_Array("AS3ValType, AS3ValType", rectangle, color);
+
+	AS3_CallS("fillRect", bitmapData, fillRect_params);
+
+	return AS3_True();
+}
+
+AS3_Val FLASH_DISPLAY_BITMAP_DATA;
+
 /* Initialization/Query functions */
 static int FLASH_VideoInit(_THIS, SDL_PixelFormat *vformat);
 static SDL_Rect **FLASH_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags);
@@ -120,6 +146,8 @@ static SDL_VideoDevice *FLASH_CreateDevice(int devindex)
 	device->PumpEvents = FLASH_PumpEvents;
 
 	device->free = FLASH_DeleteDevice;
+
+	_fillRect(FLASH_DISPLAY_BITMAP_DATA, 50, 50, 50, 50, 0x00FF00);
 
 	return device;
 }
@@ -237,3 +265,4 @@ void FLASH_VideoQuit(_THIS)
 		this->screen->pixels = NULL;
 	}
 }
+
