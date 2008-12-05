@@ -29,6 +29,8 @@
 #include "SDL_pixels_c.h"
 #include "SDL_leaks.h"
 
+// For sztrace statements!
+#include "AS3.h"
 
 /* Public routines */
 /*
@@ -38,6 +40,9 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 			int width, int height, int depth,
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
+
+sztrace("SDL_CreateRGBSurface");
+
 	SDL_VideoDevice *video = current_video;
 	SDL_VideoDevice *this  = current_video;
 	SDL_Surface *screen;
