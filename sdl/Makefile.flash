@@ -14,6 +14,7 @@ TARGET  = libSDL.a
 SOURCES = \
 	src/*.c \
 	src/audio/*.c \
+	src/audio/flash/*.c \
 	src/cdrom/*.c \
 	src/cpuinfo/*.c \
 	src/events/*.c \

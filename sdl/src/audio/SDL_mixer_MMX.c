@@ -35,7 +35,7 @@
 *   Mixing for 16 bit signed buffers
 ***********************************************/
 
-#if defined(__GNUC__) && defined(__i386__) && defined(SDL_ASSEMBLY_ROUTINES)
+#if defined(__GNUC__) && defined(__i386__) && SDL_ASSEMBLY_ROUTINES
 void SDL_MixAudio_MMX_S16(char* dst,char* src,unsigned int size,int volume)
 {
     __asm__ __volatile__ (

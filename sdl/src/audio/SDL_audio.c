@@ -101,6 +101,9 @@ static AudioBootStrap *bootstrap[] = {
 #if SDL_AUDIO_DRIVER_DC
 	&DCAUD_bootstrap,
 #endif
+#if SDL_AUDIO_DRIVER_FLASH
+	&FLASHAUD_bootstrap,
+#endif
 #if SDL_AUDIO_DRIVER_NDS
 	&NDSAUD_bootstrap,
 #endif

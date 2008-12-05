@@ -2244,7 +2244,7 @@ static size_t traverse_and_check(mstate m);
 #define treebin_at(M,i)     (&((M)->treebins[i]))
 
 /* assign tree index for size S to variable I */
-#if defined(__GNUC__) && defined(i386)
+#if defined(__GNUC__) && defined(i386) && SDL_ASSEMBLY_ROUTINES
 #define compute_tree_index(S, I)\
 {\
   size_t X = S >> TREEBIN_SHIFT;\
@@ -2309,7 +2309,7 @@ static size_t traverse_and_check(mstate m);
 
 /* index corresponding to given bit */
 
-#if defined(__GNUC__) && defined(i386)
+#if defined(__GNUC__) && defined(i386) && SDL_ASSEMBLY_ROUTINES
 #define compute_bit2idx(X, I)\
 {\
   unsigned int J;\
