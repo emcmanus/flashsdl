@@ -31,12 +31,11 @@
 #include "SDL_flashevents_c.h"
 #include "SDL_flashmouse_c.h"
 
-#define FLASHVID_DRIVER_NAME "flash"
-
 #include "AS3.h"
 
+#define FLASHVID_DRIVER_NAME "flash"
 
-static AS3_Val _fillRect(AS3_Val bitmapData, int x, int y, int w, int h, int c)
+static AS3_Val fillRect(AS3_Val bitmapData, int x, int y, int w, int h, int c)
 {
 	AS3_Val Rectangle_class;
 	AS3_Val rectangle;
@@ -59,7 +58,29 @@ static AS3_Val _fillRect(AS3_Val bitmapData, int x, int y, int w, int h, int c)
 	return AS3_True();
 }
 
-AS3_Val FLASH_DISPLAY_BITMAP_DATA;
+static AS3_Val initDisplay(AS3_Val parent, int width, int height)
+{
+	AS3_Val Bitmap_class;
+	AS3_Val BitmapData_class;
+	AS3_Val bitmapData;
+	AS3_Val bitmap;
+
+	Bitmap_class = AS3_NSGetS(AS3_String("flash.display"), "Bitmap");
+	BitmapData_class = AS3_NSGetS(AS3_String("flash.display"), "BitmapData");
+
+	bitmapData = AS3_New(BitmapData_class, 
+		AS3_Array("AS3ValType, AS3ValType, AS3ValType, AS3ValType",
+			   AS3_Int(500), AS3_Int(500), AS3_False(), AS3_Int(0x000000)));
+
+	bitmap = AS3_New(Bitmap_class, AS3_Array("AS3ValType", bitmapData));
+
+	AS3_CallS("addChild", parent, AS3_Array("AS3ValType", bitmap));
+
+	return bitmapData;
+}
+
+//AS3_Val FLASH_DISPLAY_BITMAP_DATA;
+AS3_Val FLASH_DISPLAY_PARENT_SPRITE;
 
 /* Initialization/Query functions */
 static int FLASH_VideoInit(_THIS, SDL_PixelFormat *vformat);
@@ -147,7 +168,6 @@ static SDL_VideoDevice *FLASH_CreateDevice(int devindex)
 
 	device->free = FLASH_DeleteDevice;
 
-	_fillRect(FLASH_DISPLAY_BITMAP_DATA, 50, 50, 50, 50, 0x00FF00);
 
 	return device;
 }
@@ -179,8 +199,11 @@ SDL_Rect **FLASH_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags)
 SDL_Surface *FLASH_SetVideoMode(_THIS, SDL_Surface *current,
 				int width, int height, int bpp, Uint32 flags)
 {
-	sztrace("FLASH_SetVideoMode(_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags)\n");
+	AS3_Val bitmap_data = initDisplay(FLASH_DISPLAY_PARENT_SPRITE, width, height);
 
+	sztrace("FLASH_SetVideoMode(_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags)\n");
+	fillRect(bitmap_data, 50, 50, 50, 50, 0xee00ff);
+		
 	if ( this->hidden->buffer ) {
 		SDL_free( this->hidden->buffer );
 	}
