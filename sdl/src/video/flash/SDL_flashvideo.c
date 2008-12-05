@@ -31,7 +31,6 @@
 #include "SDL_flashevents_c.h"
 #include "SDL_flashmouse_c.h"
 
-#include "AS3.h"
 
 #define FLASHVID_DRIVER_NAME "flash"
 
@@ -202,7 +201,6 @@ SDL_Surface *FLASH_SetVideoMode(_THIS, SDL_Surface *current,
 	AS3_Val bitmap_data = initDisplay(FLASH_DISPLAY_PARENT_SPRITE, width, height);
 
 	sztrace("FLASH_SetVideoMode(_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags)\n");
-	fillRect(bitmap_data, 50, 50, 50, 50, 0xee00ff);
 		
 	if ( this->hidden->buffer ) {
 		SDL_free( this->hidden->buffer );
@@ -232,6 +230,11 @@ SDL_Surface *FLASH_SetVideoMode(_THIS, SDL_Surface *current,
 	this->hidden->h = current->h = height;
 	current->pitch = current->w * (bpp / 8);
 	current->pixels = this->hidden->buffer;
+
+	/* Store the flash.display.BitmapData that we will be drawing to. */
+	this->hidden->bitmap_data = bitmap_data;
+
+	fillRect(this->hidden->bitmap_data, 50, 50, 50, 50, 0xee00ff);
 
 	/* We're done */
 	return(current);

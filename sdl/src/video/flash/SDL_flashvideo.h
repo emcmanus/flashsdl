@@ -25,6 +25,7 @@
 #define _SDL_flashvideo_h
 
 #include "../SDL_sysvideo.h"
+#include "AS3.h"
 
 /* Hidden "this" pointer for the video functions */
 #define _THIS	SDL_VideoDevice *this
@@ -35,6 +36,7 @@
 struct SDL_PrivateVideoData {
     int w, h;
     void *buffer;
+    AS3_Val bitmap_data;
 };
 
 #endif
