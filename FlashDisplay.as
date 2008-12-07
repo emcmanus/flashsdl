@@ -3,12 +3,12 @@ package {
 	
 	import flash.display.*;
 
-	public class flashsdl extends Sprite {
+	public class FlashDisplay extends Sprite {
 		
 		private var canvas:Bitmap;
 		private var canvasData:BitmapData;
 		
-		public function flashsdl() {
+		public function FlashDisplay() {
 			
 			var loader:CLibInit;
 			var lib:Object;
