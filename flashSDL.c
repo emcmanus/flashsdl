@@ -1,79 +1,72 @@
-// gcc flashSDL.c -DFLASH -Isdl/include -Lsdl -lSDL -swc -O3 -o libSDL.swc
-// OLD -> mxmlc -library-path+=libSDL.swc --target-player=10.0.0 flashsdl.as
+#include <stdio.h>
 
 #include "SDL.h"
 #include "AS3.h"
-#include <stdio.h>
+
+
+// Prototypes
+
+AS3_Val setBitmapData(void *data, AS3_Val bitmapData);
+
+void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
+int run();
 
 extern AS3_Val FLASH_DISPLAY_BITMAP_DATA;
 
-// Prototypes
-void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
-AS3_Val initDisplay(AS3_Val parent, int width, int height);
-AS3_Val config(void* self, AS3_Val args);
-int run();
 
 
 /*
-Lib entry
+	Lib Initialization
 */
+
 int main(int argc, char **argv){
     
 	// Create callbacks
 	AS3_Val runMethod = AS3_Function(NULL, run);
-	AS3_Val configMethod = AS3_Function(NULL, config);
+	AS3_Val setBitmapDataMethod = AS3_Function(NULL, setBitmapData);
 	
-    AS3_Val libSDL = AS3_Object("run:AS3ValType, config:AS3ValType", runMethod, configMethod);
+    AS3_Val libSDL = AS3_Object("run:AS3ValType, setBitmapData:AS3ValType", runMethod, setBitmapDataMethod);
     
+	AS3_Release( runMethod );
+	AS3_Release( setBitmapDataMethod );
+	
     AS3_LibInit(libSDL);
     return 0;
 }
 
 
-
 /*
-Takes an AS3_Val parent, adds a new bitmap object of the specified width/height,
-and returns a reference to the its bitmapdata, which we then use internally
-for drawing/updating the display.
-*/
-AS3_Val initDisplay(AS3_Val parent, int width, int height)
-{
-        AS3_Val Bitmap_class;
-        AS3_Val BitmapData_class;
-        AS3_Val bitmapData;
-        AS3_Val bitmap;
-
-        Bitmap_class = AS3_NSGetS(AS3_String("flash.display"), "Bitmap");
-        BitmapData_class = AS3_NSGetS(AS3_String("flash.display"), "BitmapData");
-
-        bitmapData = AS3_New(BitmapData_class,
-                AS3_Array("AS3ValType, AS3ValType, AS3ValType, AS3ValType",
-                           AS3_Int(500), AS3_Int(500), AS3_False(), AS3_Int(0x000000)));
-
-        bitmap = AS3_New(Bitmap_class, AS3_Array("AS3ValType", bitmapData));
-
-        AS3_CallS("addChild", parent, AS3_Array("AS3ValType", bitmap));
-
-        return bitmapData;
-}
-
-
-/*
-Call this before actually running the method containing your main loop. This accepts a
-reference to a sprite. We'll later add a bitmap object as a child on that sprite which
-we can draw to.
-*/
-AS3_Val config( void* self, AS3_Val args ){
+	Associates SDL's buffer with a user's BitmapData object. This is a more
+	robust solution than asking for a sprite and adding a child bitmap.
 	
-	AS3_Val parent;
-	AS3_ArrayValue( args, "AS3ValType", &parent );
+	TODO: Either scale the display buffer to bitmapdata's dimensions or enforce
+	size requirements (ie, your bitmapdata obj must be of the same dimensions
+	specified in SDL_setViewMode)
+*/
+
+AS3_Val setBitmapData(void *data, AS3_Val args) {
 	
-	FLASH_DISPLAY_BITMAP_DATA = initDisplay(parent, 800, 600);
+	AS3_Val bitmapDataObject;
+	
+	AS3_ArrayValue( args, "AS3ValType", &bitmapDataObject );
+	
+	FLASH_DISPLAY_BITMAP_DATA = bitmapDataObject;
 	
 	return AS3_Int(0);
 }
 
 
+
+
+
+
+
+
+
+
+/*
+	Program logic
+*/
 
 int run() {
  SDL_Surface *screen;
@@ -90,10 +83,10 @@ int run() {
   return -1;
  }
 
- screen = SDL_SetVideoMode(800, 600, 24, SDL_SWSURFACE | SDL_FULLSCREEN);
+ screen = SDL_SetVideoMode(200, 150, 32, SDL_SWSURFACE | SDL_FULLSCREEN);
  if ( screen == NULL )
  {
-  fprintf(stderr, "Couldn't set 800x600x24 video mode: %s\n", SDL_GetError());
+  fprintf(stderr, "Couldn't set 320x240x24 video mode: %s\n", SDL_GetError());
   return -2;
  }
 
@@ -106,7 +99,7 @@ int run() {
 
 
  //while( !quit )
- for ( i=0; i<5; ++i )	// Flash pegging == bad
+ for ( i=0; i<1; ++i )	// Flash pegging == bad
  {
   // Poll for events
   while( SDL_PollEvent( &event ) )
@@ -162,6 +155,12 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
  // Here p is the address to the pixel we want to set
  Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
 
+// Print pixel
+char buf[32];
+sprintf( buf, "setting Pixel %i, %i to 0x%X", x, y, pixel );
+sztrace( buf );
+free(buf);
+
  switch(bpp)
  {
   case 1:
@@ -171,6 +170,7 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
    *(Uint16 *)p = pixel;
    break;
   case 3:
+   sztrace("bbp==3");
    if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
    {
     p[0] = (pixel >> 16) & 0xff;

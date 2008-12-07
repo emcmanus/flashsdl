@@ -78,8 +78,8 @@ static AS3_Val initDisplay(AS3_Val parent, int width, int height)
 	return bitmapData;
 }
 
-//AS3_Val FLASH_DISPLAY_BITMAP_DATA;
-AS3_Val FLASH_DISPLAY_PARENT_SPRITE;
+AS3_Val FLASH_DISPLAY_BITMAP_DATA;
+//AS3_Val FLASH_DISPLAY_PARENT_SPRITE;
 
 /* Initialization/Query functions */
 static int FLASH_VideoInit(_THIS, SDL_PixelFormat *vformat);
@@ -198,24 +198,24 @@ SDL_Rect **FLASH_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags)
 SDL_Surface *FLASH_SetVideoMode(_THIS, SDL_Surface *current,
 				int width, int height, int bpp, Uint32 flags)
 {
-	AS3_Val bitmap_data = initDisplay(FLASH_DISPLAY_PARENT_SPRITE, width, height);
+	//AS3_Val bitmap_data = initDisplay(FLASH_DISPLAY_PARENT_SPRITE, width, height);
 
 	sztrace("FLASH_SetVideoMode(_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags)\n");
 		
 	if ( this->hidden->buffer ) {
 		SDL_free( this->hidden->buffer );
 	}
-
+	
 	this->hidden->buffer = SDL_malloc(width * height * (bpp / 8));
 	if ( ! this->hidden->buffer ) {
 		SDL_SetError("Couldn't allocate buffer for requested mode");
 		return(NULL);
 	}
-
+	
 /* 	printf("Setting mode %dx%d\n", width, height); */
-
+	
 	SDL_memset(this->hidden->buffer, 0, width * height * (bpp / 8));
-
+	
 	/* Allocate the new pixel format for the screen */
 	if ( ! SDL_ReallocFormat(current, bpp, 0, 0, 0, 0) ) {
 		SDL_free(this->hidden->buffer);
@@ -223,19 +223,19 @@ SDL_Surface *FLASH_SetVideoMode(_THIS, SDL_Surface *current,
 		SDL_SetError("Couldn't allocate new pixel format for requested mode");
 		return(NULL);
 	}
-
+	
 	/* Set up the new mode framebuffer */
 	current->flags = flags & SDL_FULLSCREEN;
 	this->hidden->w = current->w = width;
 	this->hidden->h = current->h = height;
 	current->pitch = current->w * (bpp / 8);
 	current->pixels = this->hidden->buffer;
-
+	
 	/* Store the flash.display.BitmapData that we will be drawing to. */
-	this->hidden->bitmap_data = bitmap_data;
-
-	fillRect(this->hidden->bitmap_data, 50, 50, 50, 50, 0xee00ff);
-
+	this->hidden->bitmap_data = FLASH_DISPLAY_BITMAP_DATA;
+	
+	//fillRect(this->hidden->bitmap_data, 50, 50, 50, 50, 0xee00ff);
+	
 	/* We're done */
 	return(current);
 }
@@ -265,10 +265,67 @@ static void FLASH_UnlockHWSurface(_THIS, SDL_Surface *surface)
 	return;
 }
 
+
+
+/*
+	This is just a messy proof of concept! *REALLY REALLY* SLOW!
+	Takes about 10 seconds to copy a single buffer! Next step is
+	to draw more directly using setPixels().
+*/
+
 static void FLASH_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
 {
 	sztrace("FLASH_UpdateRects(_THIS, int numrects, SDL_Rect *rects)\n");
-	/* do nothing. */
+	
+	// Print endian
+	char str_endian[24];
+	if(SDL_BYTEORDER == SDL_BIG_ENDIAN){
+		sprintf(str_endian, "\n%s", "big endian");
+	} else {
+		sprintf(str_endian, "\n%s", "little endian");
+	}
+	
+	char buf[56];
+	sprintf(buf, "new width: %d, height: %d", this->hidden->w, this->hidden->h);
+	sztrace(strcat(buf, str_endian));
+	
+	free(buf);
+	free(str_endian);
+	
+	
+	// First true drawing attempt -- For width->for height, setPixel
+	int i, j;
+	
+
+	int bpp = SDL_VideoSurface->format->BytesPerPixel;
+	
+	// Here p is the address to the pixel we want to set
+	Uint8 r, g, b;
+	Uint32 pixel;
+	int offset;
+	
+	AS3_Val setPixel_params;
+	
+	// Lock surfaces
+	AS3_CallS("lock", this->hidden->bitmap_data, NULL);
+	SDL_LockSurface(SDL_VideoSurface);
+	
+	// i=column, j=row
+	for ( i=0; i<SDL_VideoSurface->pitch; i++ ){
+		for ( j=0; j<this->hidden->h; j++ ){
+			offset = (SDL_VideoSurface->pitch/bpp * j + i);
+			
+			pixel = ((Uint32 *)SDL_VideoSurface->pixels)[offset];
+			pixel |= 0xFF000000;
+			
+			setPixel_params = AS3_Array("IntType, IntType, IntType", i, j, pixel);
+			AS3_CallS("setPixel32", this->hidden->bitmap_data, setPixel_params);
+		}
+	}
+	
+	// Unlock surfaces
+	AS3_CallS("unlock", this->hidden->bitmap_data, NULL);
+	SDL_UnlockSurface(SDL_VideoSurface);
 }
 
 int FLASH_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)
