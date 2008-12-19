@@ -39,7 +39,7 @@
 
 /* The translation tables from a console scancode to a SDL keysym */
 /* FIXME: Free the keymap when we shut down the video mode */
-static keymap_t *vga_keymap = NULL;
+static keymap_temp *vga_keymap = NULL;
 static SDLKey keymap[128];
 static SDL_keysym *TranslateKey(int scancode, SDL_keysym *keysym);
 

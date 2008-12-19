@@ -36,7 +36,6 @@
 struct SDL_PrivateVideoData {
     int w, h;
     void *buffer;
-    AS3_Val bitmap_data;
 };
 
 #endif

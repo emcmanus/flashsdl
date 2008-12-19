@@ -34,52 +34,6 @@
 
 #define FLASHVID_DRIVER_NAME "flash"
 
-static AS3_Val fillRect(AS3_Val bitmapData, int x, int y, int w, int h, int c)
-{
-	AS3_Val Rectangle_class;
-	AS3_Val rectangle;
-	AS3_Val xloc = AS3_Int(x);
-	AS3_Val yloc = AS3_Int(y);
-	AS3_Val width = AS3_Int(w);
-	AS3_Val height = AS3_Int(h);
-	AS3_Val color = AS3_Int(c);
-	AS3_Val rectangle_params = AS3_Array("AS3ValType, AS3ValType, AS3ValType, AS3ValType", xloc, yloc, width, height);
-	AS3_Val fillRect_params;
-
-	Rectangle_class = AS3_NSGetS(AS3_String("flash.geom"), "Rectangle");
-
-	rectangle = AS3_New(Rectangle_class, rectangle_params);
-
-	fillRect_params = AS3_Array("AS3ValType, AS3ValType", rectangle, color);
-
-	AS3_CallS("fillRect", bitmapData, fillRect_params);
-
-	return AS3_True();
-}
-
-static AS3_Val initDisplay(AS3_Val parent, int width, int height)
-{
-	AS3_Val Bitmap_class;
-	AS3_Val BitmapData_class;
-	AS3_Val bitmapData;
-	AS3_Val bitmap;
-
-	Bitmap_class = AS3_NSGetS(AS3_String("flash.display"), "Bitmap");
-	BitmapData_class = AS3_NSGetS(AS3_String("flash.display"), "BitmapData");
-
-	bitmapData = AS3_New(BitmapData_class, 
-		AS3_Array("AS3ValType, AS3ValType, AS3ValType, AS3ValType",
-			   AS3_Int(500), AS3_Int(500), AS3_False(), AS3_Int(0x000000)));
-
-	bitmap = AS3_New(Bitmap_class, AS3_Array("AS3ValType", bitmapData));
-
-	AS3_CallS("addChild", parent, AS3_Array("AS3ValType", bitmap));
-
-	return bitmapData;
-}
-
-AS3_Val FLASH_DISPLAY_BITMAP_DATA;
-//AS3_Val FLASH_DISPLAY_PARENT_SPRITE;
 
 /* Initialization/Query functions */
 static int FLASH_VideoInit(_THIS, SDL_PixelFormat *vformat);
@@ -198,7 +152,6 @@ SDL_Rect **FLASH_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags)
 SDL_Surface *FLASH_SetVideoMode(_THIS, SDL_Surface *current,
 				int width, int height, int bpp, Uint32 flags)
 {
-	//AS3_Val bitmap_data = initDisplay(FLASH_DISPLAY_PARENT_SPRITE, width, height);
 
 	sztrace("FLASH_SetVideoMode(_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags)\n");
 		
@@ -231,11 +184,6 @@ SDL_Surface *FLASH_SetVideoMode(_THIS, SDL_Surface *current,
 	current->pitch = current->w * (bpp / 8);
 	current->pixels = this->hidden->buffer;
 	
-	/* Store the flash.display.BitmapData that we will be drawing to. */
-	this->hidden->bitmap_data = FLASH_DISPLAY_BITMAP_DATA;
-	
-	//fillRect(this->hidden->bitmap_data, 50, 50, 50, 50, 0xee00ff);
-	
 	/* We're done */
 	return(current);
 }
@@ -266,66 +214,223 @@ static void FLASH_UnlockHWSurface(_THIS, SDL_Surface *surface)
 }
 
 
-
-/*
-	This is just a messy proof of concept! *REALLY REALLY* SLOW!
-	Takes about 10 seconds to copy a single buffer! Next step is
-	to draw more directly using setPixels().
-*/
-
 static void FLASH_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
 {
-	sztrace("FLASH_UpdateRects(_THIS, int numrects, SDL_Rect *rects)\n");
+	//sztrace("FLASH_UpdateRects(_THIS, int numrects, SDL_Rect *rects)\n");
 	
 	// Print endian
+	/*
 	char str_endian[24];
 	if(SDL_BYTEORDER == SDL_BIG_ENDIAN){
 		sprintf(str_endian, "\n%s", "big endian");
 	} else {
 		sprintf(str_endian, "\n%s", "little endian");
 	}
+	*/
+	
+	
+	/*
+		Draw method
+	*
+	
+	// Create new byteArray
+	AS3_Val buffer_NS = AS3_String("flash.utils");
+	AS3_Val buffer_class = AS3_NSGetS(buffer_NS, "ByteArray");
+	AS3_Val buffer_array = AS3_New(buffer_class, AS3_Array(""));
+	AS3_Release(buffer_NS);
+	AS3_Release(buffer_class);
+	
+	int bpp = SDL_VideoSurface->format->BytesPerPixel;
+	int buffer_length = SDL_VideoSurface->pitch * this->hidden->h * bpp;
+	
+	// Get Ram, note current position
+	AS3_Val flash_ram = AS3_Ram();
+	AS3_Val old_ram_position = AS3_GetS( flash_ram, "position" );
+	int buffer_position = (int) &SDL_VideoSurface->pixels;
+	
+	// Move head to buffer position
+	AS3_SetS( flash_ram, "position", AS3_Int(buffer_position) );
+	
+	// Debug
+	sztrace("buffer address:");
+	AS3_Trace( AS3_Int(buffer_position) );
+	
+	sztrace("current ram position:");
+	AS3_Trace( AS3_GetS(flash_ram, "position") );
+	
+	sztrace("ram length:");
+	AS3_Trace( AS3_GetS(flash_ram, "length") );
+	
+	
+	// Copy buffer into new byte array
+	AS3_ByteArray_readBytes( &buffer_array, flash_ram, buffer_length );
+	
+	// call setPixels with the buffer byteArray
+	AS3_Val rect_NS = AS3_String("flash.geom");
+	AS3_Val rect_Class = AS3_NSGetS(rect_NS, "Rectangle");
+	AS3_Val setPixels_Rect = AS3_New(rect_Class, AS3_Array("IntType, IntType, IntType, IntType", 
+				0, 0, SDL_VideoSurface->pitch, this->hidden->h));
+	AS3_Release(rect_NS);
+	AS3_Release(rect_Class);
+	
+	sztrace("buffer array length:");
+	AS3_Trace( AS3_GetS(buffer_array, "length") );
+	
+	AS3_Val setPixels_Params = AS3_Array("AS3ValType, AS3ValType", setPixels_Rect, buffer_array);
+	AS3_CallS("setPixels", this->hidden->bitmap_data, setPixels_Params);
+	
+	// reset ram position
+	AS3_SetS( flash_ram, "position", old_ram_position );
+	
+	*/
+	
+//	// Debug -- are we actually copying any data?
+//	int i;
+//	int checksum=0;
+//	for(i=0; i<(bufferLength/4); i++){
+//		checksum += AS3_IntValue(AS3_CallS("readUnsignedInt", bufferArray, AS3_Array("")));
+//	}
+//	
+//	sprintf( buf, "Checksum = %i", checksum );
+//	sztrace(buf);
+//	free(buf);
+	
+	
+	// New Attempt -- Copy Buffer from RAM into a new ByteArray
+	/*
 	
 	char buf[56];
-	sprintf(buf, "new width: %d, height: %d", this->hidden->w, this->hidden->h);
+	sprintf(buf, "width: %d, height: %d", this->hidden->w, this->hidden->h);
 	sztrace(strcat(buf, str_endian));
 	
 	free(buf);
 	free(str_endian);
+	*/
+	
+//	AS3_Val ram = AS3_Ram();
+//	
+//	AS3_Val bufferNS = AS3_String("flash.utils");
+//	AS3_Val bufferClass = AS3_NSGetS(bufferNS, "ByteArray");
+//	AS3_Release(bufferNS);
+//	
+//	AS3_Val bufferArray = AS3_New(bufferClass, AS3_Array(""));
+	
+	// Get Buffer address (ram offset)
+//	AS3_Val bufPosition = AS3_Ptr(SDL_VideoSurface->pixels);	// I hope this handles uints properly
+//	int bpp = SDL_VideoSurface->format->BytesPerPixel;
 	
 	
-	// First true drawing attempt -- For width->for height, setPixel
-	int i, j;
+//	int bufferLength = SDL_VideoSurface->pitch * this->hidden->h * bpp;
 	
-
-	int bpp = SDL_VideoSurface->format->BytesPerPixel;
 	
-	// Here p is the address to the pixel we want to set
-	Uint8 r, g, b;
-	Uint32 pixel;
-	int offset;
+	// Store old ram position
+	//AS3_Val oldRamPosition;
+	//oldRamPosition = AS3_GetS(ram, "position");
 	
-	AS3_Val setPixel_params;
+	// Move ram head to buffer -- *none* of these work!
+	//AS3_Set( ram, AS3_String("position"), bufPosition );
+//	AS3_ByteArray_seek( ram, AS3_IntValue(bufPosition), SEEK_SET );
+	//AS3_CallS( "position", ram, AS3_Array("IntType", bufPosition) );
 	
-	// Lock surfaces
-	AS3_CallS("lock", this->hidden->bitmap_data, NULL);
-	SDL_LockSurface(SDL_VideoSurface);
+	//AS3_SetS(bufferArray, "position", AS3_Int(0));
+	//AS3_ByteArray_writeBytes( bufferArray, , bufferLength );
 	
-	// i=column, j=row
-	for ( i=0; i<SDL_VideoSurface->pitch; i++ ){
-		for ( j=0; j<this->hidden->h; j++ ){
-			offset = (SDL_VideoSurface->pitch/bpp * j + i);
-			
-			pixel = ((Uint32 *)SDL_VideoSurface->pixels)[offset];
-			pixel |= 0xFF000000;
-			
-			setPixel_params = AS3_Array("IntType, IntType, IntType", i, j, pixel);
-			AS3_CallS("setPixel32", this->hidden->bitmap_data, setPixel_params);
-		}
-	}
+	//AS3_SetS(bufferArray, "position", AS3_Int(0));
+	
+	// Next step -- are we actually copying anything from the display buffer?
+//	int i;
+//	int checksum=0;
+//	for(i=0; i<(bufferLength/4); i++){
+//		checksum += AS3_IntValue(AS3_CallS("readUnsignedInt", bufferArray, AS3_Array("")));
+//	}
+//	
+//	sprintf( buf, "Checksum = %i", checksum );
+//	sztrace(buf);
+//	free(buf);
+	
+//	AS3_Val firstPx = AS3_CallS( "readUnsignedInt", bufferArray, AS3_Array("") );
+//	sztrace("First Pixel:");
+//	AS3_Trace(firstPx);
+	
+	
+	// Create new rect(0, 0, w, h);
+//	AS3_Val rectNs = AS3_String("flash.geom");
+//	AS3_Val rectClass = AS3_NSGetS(rectNs, "Rectangle");
+//	AS3_Val setPixels_Rect = AS3_New(rectClass, AS3_Array("IntType, IntType, IntType, IntType", 
+//				0, 0, this->hidden->w, this->hidden->h));
+//	AS3_Release(rectNs);
+//	AS3_Release(rectClass);
+	
+	/*
+	sztrace("Buffer length:");
+	AS3_Trace(AS3_GetS(bufferArray, "length"));
+	*/
+	
+	//sztrace("new2");
+	
+//	AS3_Val setPixels_Params = AS3_Array("AS3ValType, AS3ValType", setPixels_Rect, ram);
+//	AS3_CallS("setPixels", this->hidden->bitmap_data, setPixels_Params);
+	
+	/*
+	AS3_Val _displayBuffer = FLASH_newByteArrayFromMalloc( SDL_VideoSurface->pixels, bufferLength );
+	
+	// Parameters for setPixels call
+	AS3_Val setPixels_Params = AS3_Array("AS3ValType, AS3ValType", setPixels_Rect, _displayBuffer);
+	sztrace("display buffer:");
+	AS3_Trace(_displayBuffer);
+	AS3_CallS("setPixels", this->hidden->bitmap_data, setPixels_Params);
+	
+	
+	// Reset ram head to old position
+	//AS3_SetS( ram, "position", oldRamPosition );
+	*/
+	
+	
+	// AS3 Callback drawing method. This renders the whole frame, not just the appropriate Rect.
+//	
+//	AS3_Val toolsNS = AS3_String("tools");
+//	AS3_Val staticCallbacks = AS3_NSGetS(toolsNS, "StaticCallbacks");
+//	
+//	AS3_CallS( "printBuffer", staticCallbacks, AS3_Array("PtrType", SDL_VideoSurface->pixels));
+//	
+//	AS3_Release( toolsNS );
+//	AS3_Release( staticCallbacks );
+	
+	
+	
+//	// First true drawing attempt -- For width->for height, setPixel
+//	int i, j;
+//	
+//
+//	
+//	
+//	// Here p is the address to the pixel we want to set
+//	Uint8 r, g, b;
+//	Uint32 pixel;
+//	int offset;
+//	
+//	AS3_Val setPixel_params;
+//	
+//	// Lock surfaces
+//	AS3_CallS("lock", this->hidden->bitmap_data, NULL);
+//	SDL_LockSurface(SDL_VideoSurface);
+//	
+//	// i=column, j=row
+//	for ( i=0; i<SDL_VideoSurface->pitch; i++ ){
+//		for ( j=0; j<this->hidden->h; j++ ){
+//			offset = (SDL_VideoSurface->pitch/bpp * j + i);
+//			
+//			pixel = ((Uint32 *)SDL_VideoSurface->pixels)[offset];
+//			pixel |= 0xFF000000;
+//			
+//			setPixel_params = AS3_Array("IntType, IntType, IntType", i, j, pixel);
+//			AS3_CallS("setPixel32", this->hidden->bitmap_data, setPixel_params);
+//		}
+//	}
 	
 	// Unlock surfaces
-	AS3_CallS("unlock", this->hidden->bitmap_data, NULL);
-	SDL_UnlockSurface(SDL_VideoSurface);
+	//AS3_CallS("unlock", this->hidden->bitmap_data, NULL);
+	//SDL_UnlockSurface(SDL_VideoSurface);
 }
 
 int FLASH_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)
