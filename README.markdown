@@ -86,4 +86,4 @@ Perhaps this is best understood by example. Examine `./flashsdl.c`. Most immedia
 
 Make sure you've properly built and installed FlashSDL by building the test application. Then try running your application's ./configure. You may have to manually alter the build file to successfully compile with Alchemy.
 
-Once you've successfully compiled without any errors, try linking the resuling SWC with the AS3 side of your application, built on `./src/`.
+Once you've successfully compiled, try linking the resuling SWC with the AS3 side of your application (which should be built on `./src/`).
