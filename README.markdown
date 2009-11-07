@@ -44,7 +44,7 @@ Follow the instructions below. Keep in mind that you may need to specify paths t
 
 ####Library####
 
-In `./sdl/`:
+In `sdl/`:
 
 `make -f Makefile.flash clean all;`
 
@@ -57,27 +57,27 @@ Build the library. (See above.)
 
 Build libSDL.swc:
 
-In the repository root (./):
+In the repository root (`./`):
 
 `gcc flashSDL.c -DFLASH -Isdl/include -Lsdl -lSDL -swc -O3 -o libSDL.swc`
 
-If all goes well, you'll see libSDL.swc in the repository root. This SWC is the Alchemy version of a static library, which you can link against in your Flash application. In `./src/` I've included the AS3 side of a test application.
+If all goes well, you'll see libSDL.swc in the repository root. This SWC is the Alchemy version of a static library, which you can link against in your Flash application. In `src/` I've included the AS3 side of a test application.
 
 Make sure libSDL.swc is in your classpath. In FlashBuilder you can do this by right clicking the project, selecting "Properties", and "ActionScript Build Path."
 
-Now that you have linked against the SWC, build `/src/flashsdl.as`. The SWF is the finished test application.
+Now that you have linked against the SWC, build `src/flashsdl.as`. The SWF is the finished test application.
 
 
 
 ##Install##
 
-Right now this is a manual process. After building the library, copy sdl/libSDL.a to your Alchemy /lib directory. Copy all header files in sdl/include to your Alchemy /include file. In my setup, this is ~/alchemy/usr/local/[lib/ or include/].
+Right now this is a manual process. After building the library, copy `sdl/libSDL.a` to your Alchemy /lib directory. Copy all header files in sdl/include to your Alchemy /include file. In my setup, this is ~/alchemy/usr/local/[lib/ or include/].
 
 
-##Porting your application to use FlashSDL###
+##Porting your SDL application to FlashSDL###
 
-Perhaps this is best understood by example. Examine `/flashsdl.c`. Most immediately you will have to refactor your C application's main loop to run iteratively in the tick() method, assuming you end up using the application scaffolding in `./src/`.
+Perhaps this is best understood by example. Examine `./flashsdl.c`. Most immediately you will have to refactor your C application's main loop to run iteratively in the tick() method, assuming you end up using the application scaffolding in `./src/`.
 
 Make sure you've properly built and installed FlashSDL by building the test application. Then try running your application's ./configure. You may have to manually alter the build file to successfully compile with Alchemy.
 
-Once you've successfully compiled without any errors, you may have to flesh out the AS3 scaffolding to polish the application.
+Once you've successfully compiled without any errors, try linking the resuling SWC with the AS3 side of your application, built on `./src/`.
