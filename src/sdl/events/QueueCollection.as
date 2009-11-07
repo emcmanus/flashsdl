@@ -1,5 +1,5 @@
 package sdl.events {
-	import de.polygonal.ds.LinkedQueue;
+	import structures.LinkedQueue;
 	
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
