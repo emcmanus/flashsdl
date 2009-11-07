@@ -77,7 +77,7 @@ After building the library, there are two ways to install the library.
 
 or
 
-2) Edit Alchemy/achacks/sdl-config to return the proper paths to libSDL.a and the headers. When you've done this wrong, your application's ./configure will probably let you know.
+2) Edit `Alchemy/achacks/sdl-config` to return the proper paths to `libSDL.a` and the SDL headers. When you've done this wrong, your application's ./configure will probably let you know.
 
 
 ##Porting your SDL application to FlashSDL###
