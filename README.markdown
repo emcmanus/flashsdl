@@ -71,7 +71,13 @@ Now that you have linked against the SWC, build `src/flashsdl.as`. The SWF is th
 
 ##Install##
 
-Right now this is a manual process. After building the library, copy `sdl/libSDL.a` to your Alchemy /lib directory. Copy all header files in sdl/include to your Alchemy /include file. In my setup, this is ~/alchemy/usr/local/[lib/ or include/].
+After building the library, there are two ways to install the library.
+
+1) Copy `sdl/libSDL.a` to your Alchemy /lib directory. Copy all header files in sdl/include to your Alchemy /include file. In my setup, this is ~/alchemy/usr/local/[lib/ or include/].
+
+or
+
+2) Edit Alchemy/achacks/sdl-config to return the proper paths to libSDL.a and the headers. When you've done this wrong, your application's ./configure will probably let you know.
 
 
 ##Porting your SDL application to FlashSDL###
