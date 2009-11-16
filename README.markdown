@@ -1,6 +1,10 @@
 FlashSDL - Quick Guide
 =======================
-Port created by Ed McManus
+*Port created by Ed McManus.*
+
+*Follow me on Twitter!*
+
+[http://www.twitter.com/emcmanus](http://www.twitter.com/emcmanus)
 
 
 ## License ##
@@ -73,17 +77,17 @@ Now that you have linked against the SWC, build `src/flashsdl.as`. The SWF is th
 
 After building the library, there are two ways to install the library.
 
-1) Copy `sdl/libSDL.a` to your Alchemy /lib directory. Copy all header files in sdl/include to your Alchemy /include file. In my setup, this is ~/alchemy/usr/local/[lib/ or include/].
+1) Copy `sdl/SDL.l.bc` to your Alchemy /lib directory with `cp sdl/SDL.l.bc $ALCHEMY_HOME/usr/local/lib/`. Copy all header files in sdl/include to your Alchemy /include directory with `cp sdl/include/*.h $ALCHEMY_HOME/usr/local/include/`.
 
 or
 
-2) Edit `Alchemy/achacks/sdl-config` to return the proper paths to `libSDL.a` and the SDL headers. When you've done this wrong, your application's ./configure will probably let you know.
+2) Edit `Alchemy/achacks/sdl-config` to return the proper paths to `SDL.l.bc` and the SDL headers.
 
 
 ##Porting your SDL application to FlashSDL###
 
 Perhaps this is best understood by example. Examine `./flashsdl.c`. Most immediately you will have to refactor your C application's main loop to run iteratively in the tick() method, assuming you end up using the application scaffolding in `./src/`.
 
-Make sure you've properly built and installed FlashSDL by building the test application. Then try running your application's ./configure. You may have to manually alter the build file to successfully compile with Alchemy.
+Make sure you've properly built and installed FlashSDL by building the test application. Then try running your application's ./configure.
 
 Once you've successfully compiled, try linking the resuling SWC with the AS3 side of your application (which should be built on `./src/`).

@@ -1,6 +1,6 @@
 
 libSDL.swc: libSDL.a
-	gcc flashSDL.c -DFLASH -Isdl/include -Lsdl -lSDL -swc -O3 -o libSDL.swc
+	gcc flashSDL.c -dirty -DFLASH -Isdl/include -Lsdl -lSDL -swc -O3 -o libSDL.swc
 
 libSDL.a:
 	cd sdl; make -f Makefile.flash clean all; cd ..

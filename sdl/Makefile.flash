@@ -5,7 +5,7 @@ DEFS += -DDEBUG_BUILD -DSDL_ASSEMBLY_ROUTINES=0
 
 CC = gcc
 INCLUDE = -I./include
-CFLAGS  = -g $(DEFS) -O2 $(INCLUDE)
+CFLAGS  = -g $(DEFS) -O2 -emit-llvm $(INCLUDE)
 AR	= ar
 RANLIB	= ranlib
 
@@ -32,7 +32,7 @@ SOURCES = \
 	src/timer/dummy/*.c \
 	src/loadso/dummy/*.c \
 
-OBJECTS = $(shell echo $(SOURCES) | sed -e 's,\.c,\.o,g')
+OBJECTS = $(shell echo $(SOURCES) | sed -e 's,\.c,\.o,g')	# convert the list of sources into a list of object filenanes
 
 all: $(TARGET)
 
