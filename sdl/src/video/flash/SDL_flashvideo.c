@@ -66,7 +66,7 @@ static int FLASH_Available(void)
 
 static void FLASH_DeleteDevice(SDL_VideoDevice *device)
 {
-	sztrace("FLASH_DeleteDevice(SDL_VideoDevice *device)\n");
+	// sztrace("FLASH_DeleteDevice(SDL_VideoDevice *device)\n");
 
 	SDL_free(device->hidden);
 	SDL_free(device);
@@ -76,7 +76,7 @@ static SDL_VideoDevice *FLASH_CreateDevice(int devindex)
 {
 	SDL_VideoDevice *device;
 
-	sztrace("FLASH_CreateDevice(int devindex)\n");
+	// sztrace("FLASH_CreateDevice(int devindex)\n");
 
 	/* Initialize all variables that we clean on shutdown */
 	device = (SDL_VideoDevice *)SDL_malloc(sizeof(SDL_VideoDevice));
@@ -133,7 +133,7 @@ VideoBootStrap FLASH_bootstrap = {
 
 int FLASH_VideoInit(_THIS, SDL_PixelFormat *vformat)
 {
-	sztrace("FLASH_VideoInit(_THIS, SDL_PixelFormat *vformat)\n");
+	// sztrace("FLASH_VideoInit(_THIS, SDL_PixelFormat *vformat)\n");
 
 	/* Determine the screen depth (use default 8-bit depth) */
 	/* we change this during the SDL_SetVideoMode implementation... */
@@ -153,7 +153,7 @@ SDL_Surface *FLASH_SetVideoMode(_THIS, SDL_Surface *current,
 				int width, int height, int bpp, Uint32 flags)
 {
 
-	sztrace("FLASH_SetVideoMode(_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags)\n");
+	// sztrace("FLASH_SetVideoMode(_THIS, SDL_Surface *current, int width, int height, int bpp, Uint32 flags)\n");
 		
 	if ( this->hidden->buffer ) {
 		SDL_free( this->hidden->buffer );
@@ -191,37 +191,37 @@ SDL_Surface *FLASH_SetVideoMode(_THIS, SDL_Surface *current,
 /* We don't actually allow hardware surfaces other than the main one */
 static int FLASH_AllocHWSurface(_THIS, SDL_Surface *surface)
 {
-	sztrace("FLASH_AllocHWSurface(_THIS, SDL_Surface *surface)\n");
+	// sztrace("FLASH_AllocHWSurface(_THIS, SDL_Surface *surface)\n");
 	return(-1);
 }
 static void FLASH_FreeHWSurface(_THIS, SDL_Surface *surface)
 {
-	sztrace("FLASH_FreeHWSurface(_THIS, SDL_Surface *surface)\n");
+	// sztrace("FLASH_FreeHWSurface(_THIS, SDL_Surface *surface)\n");
 	return;
 }
 
 /* We need to wait for vertical retrace on page flipped displays */
 static int FLASH_LockHWSurface(_THIS, SDL_Surface *surface)
 {
-	sztrace("FLASH_LockHWSurface(_THIS, SDL_Surface *surface)\n");
+	// sztrace("FLASH_LockHWSurface(_THIS, SDL_Surface *surface)\n");
 	return(0);
 }
 
 static void FLASH_UnlockHWSurface(_THIS, SDL_Surface *surface)
 {
-	sztrace("FLASH_UnlockHWSurface(_THIS, SDL_Surface *surface)\n");
+	// sztrace("FLASH_UnlockHWSurface(_THIS, SDL_Surface *surface)\n");
 	return;
 }
 
 
 static void FLASH_UpdateRects(_THIS, int numrects, SDL_Rect *rects)
 {
-	sztrace("FLASH_UpdateRects(_THIS, int numrects, SDL_Rect *rects)\n");
+	// sztrace("FLASH_UpdateRects(_THIS, int numrects, SDL_Rect *rects)\n");
 }
 
 int FLASH_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)
 {
-	sztrace("FLASH_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)\n");
+	// sztrace("FLASH_SetColors(_THIS, int firstcolor, int ncolors, SDL_Color *colors)\n");
 	/* do nothing of note. */
 	return(1);
 }
