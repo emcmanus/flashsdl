@@ -27,6 +27,7 @@ This port does not support sound yet. However, stubs are in place to add that fu
 
   - `/flashSDL.c` The C portion of a simple test application.
   - `/Makefile` Make target aliases to ease the build process.
+  - `/bin/` The library built with Alchemy V0.5, ready to link agianst.
   - `/src/` The AS3 portion of the test application. It should be used as scaffolding for your own work.
   - `/sdl/` The source for SDL.
   - `/sdl/Makefile.flash` Make targets for the Flash port.
