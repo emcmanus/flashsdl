@@ -84,6 +84,10 @@ or
 
 2) Edit `Alchemy/achacks/sdl-config` to return the proper paths to `SDL.l.bc` and the SDL headers.
 
+If you're just updating the library for an existing install (and haven't modified the headers), you can re-build and install the bitcode with the command:
+
+`make -f Makefile.flash all; mv SDL.l.bc $ALCHEMY_HOME/usr/local/lib/`
+
 
 ##Porting your SDL application to FlashSDL###
 
@@ -92,3 +96,7 @@ Perhaps this is best understood by example. Examine `./flashsdl.c`. Most immedia
 Make sure you've properly built and installed FlashSDL by building the test application. Then try running your application's ./configure.
 
 Once you've successfully compiled, try linking the resuling SWC with the AS3 side of your application (which should be built on `./src/`).
+
+##Other Tips##
+
+  - You have to set the color depth of your application to 32 Bits per pixel (in your call to `SDL_SetVideoMode`).
