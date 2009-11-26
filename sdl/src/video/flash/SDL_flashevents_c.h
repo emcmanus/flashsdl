@@ -65,7 +65,7 @@ extern int FLASH_mouseX, FLASH_mouseY;
 #define SCANCODE_9			57
 
 #define SCANCODE_A			65
-#define SCANCODE_B			65
+#define SCANCODE_B			66
 #define SCANCODE_C			67
 #define SCANCODE_D			68
 #define SCANCODE_E			69

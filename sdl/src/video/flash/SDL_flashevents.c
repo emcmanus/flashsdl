@@ -66,12 +66,10 @@ void FLASH_PumpEvents(_THIS)
 	}
 	
 	// Keyboard Events
-//	sztrace("keyboard events");
-//	AS3_Trace(AS3_GetS(keyboardEvents, "size"));
 	while( AS3_IntValue(AS3_GetS(keyboardEvents, "size")) > 0 ) {
 		keyboardEvent = AS3_CallS( "dequeue", keyboardEvents, FLASH_EMPTY_PARAMS );
 		rawKeyboardEvent = AS3_IntValue( keyboardEvent );
-		scanCode = rawKeyboardEvent & 0xFF;
+		scanCode = rawKeyboardEvent & 0xFF;		// Packed event format: 9th bit for press/release, lower 8 bits for scan code
 		keyState = rawKeyboardEvent >> 8;
 		SDL_PrivateKeyboard(keyState, TranslateKey(scanCode, &keysym));
 	}
